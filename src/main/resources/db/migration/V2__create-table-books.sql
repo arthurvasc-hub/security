@@ -1,0 +1,6 @@
+CREATE TABLE books (
+    id BIGINT PRIMARY KEY UNIQUE NOT NULL,
+    title TEXT UNIQUE NOT NULL,
+    author TEXT NOT NULL,
+    description TEXT NOT NULL
+)

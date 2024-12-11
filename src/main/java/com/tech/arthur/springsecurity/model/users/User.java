@@ -1,4 +1,4 @@
-package com.tech.arthur.springsecurity.model;
+package com.tech.arthur.springsecurity.model.users;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -26,6 +26,8 @@ public class User implements UserDetails {
 
     private String password;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false)
     private Role role;
 
     @Override
