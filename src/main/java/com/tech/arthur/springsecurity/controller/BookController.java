@@ -9,10 +9,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -34,7 +31,7 @@ public class BookController {
     }
 
 
-    @PutMapping("/books")
+    @PostMapping("/books")
     public ResponseEntity<Optional<Book>> createBook(@Valid @RequestBody Book book){
     Optional<Book> newBook = Optional.ofNullable(bookService.createNewBook(book));
 

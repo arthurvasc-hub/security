@@ -30,6 +30,12 @@ public class User implements UserDetails {
     @Column(name = "role", nullable = false)
     private Role role;
 
+    public User(String username, String password, Role role) {
+        this.username = username;
+        this.password = password;
+        this.role = role;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if(role == Role.ADMIN)
