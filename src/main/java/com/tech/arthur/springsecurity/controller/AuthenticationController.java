@@ -7,6 +7,7 @@ import com.tech.arthur.springsecurity.repository.UserRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -27,9 +28,19 @@ public class AuthenticationController {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+
 
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody @Valid AuthenticationDTO data) {
+        var user = userRepository.findByUsername(data.username());
+        if (!passwordEncoder.matches(data.password(), user.getPassword())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid credentials");
+        }
+
+
         var tokenUsernamePassword = new UsernamePasswordAuthenticationToken(data.username(), data.password());
         var auth = authenticationManager.authenticate(tokenUsernamePassword);
         return ResponseEntity.ok().body(auth);
@@ -39,7 +50,7 @@ public class AuthenticationController {
     public ResponseEntity register(@RequestBody @Valid RegisterDTO data) {
         if(userRepository.findByUsername(data.username()) != null) return ResponseEntity.badRequest().build();
 
-        String passwordEncoded = new BCryptPasswordEncoder().encode(data.password());
+        String passwordEncoded = passwordEncoder.encode(data.password());
         User newUser = new User(data.username(), passwordEncoded, data.role());
         userRepository.save(newUser);
         return ResponseEntity.ok(newUser);

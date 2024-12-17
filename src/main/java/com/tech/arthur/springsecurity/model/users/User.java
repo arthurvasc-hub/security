@@ -14,7 +14,6 @@ import java.util.UUID;
 @Entity(name = "users")
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 @EqualsAndHashCode(of = "id")
 public class User implements UserDetails {
 
@@ -36,6 +35,7 @@ public class User implements UserDetails {
         this.role = role;
     }
 
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if(role == Role.ADMIN)
@@ -44,6 +44,7 @@ public class User implements UserDetails {
         return List.of(new SimpleGrantedAuthority("ROLE_USER"));
     }
 
+    public User (){};
 
     @Override
     public String getUsername(){
