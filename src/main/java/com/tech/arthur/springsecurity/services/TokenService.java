@@ -1,4 +1,4 @@
-package com.tech.arthur.springsecurity.config;
+package com.tech.arthur.springsecurity.services;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -11,30 +11,41 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
+/**
+ * Serviço responsável por gerenciar tokens JWT.
+ */
 @Service
 public class TokenService {
 
     @Value("${api.security.token.secret}")
     private String secret;
 
-    public String generateToken(User user){
-        try{
+    /**
+     * Gera um token JWT para um usuário.
+     *
+     * @param user Usuário para o qual o token será gerado.
+     * @return Token JWT.
+     */
+    public String generateToken(User user) {
+        try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
-            String token = JWT.create()
+            return JWT.create()
                     .withIssuer("auth-api")
                     .withSubject(user.getUsername())
                     .withExpiresAt(expiryTime())
                     .sign(algorithm);
-            return token;
-        }
-        catch(JWTCreationException e){
+        } catch (JWTCreationException e) {
             throw new RuntimeException("Error generating token", e);
-
         }
-
     }
 
-    public String validateToken(String token){
+    /**
+     * Valida um token JWT e retorna o nome do usuário associado.
+     *
+     * @param token Token JWT a ser validado.
+     * @return Nome do usuário, ou string vazia se inválido.
+     */
+    public String validateToken(String token) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             return JWT.require(algorithm)
@@ -42,13 +53,17 @@ public class TokenService {
                     .build()
                     .verify(token)
                     .getSubject();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return "";
         }
     }
 
-    public Instant expiryTime (){
+    /**
+     * Define o tempo de expiração do token (2 horas a partir do momento atual).
+     *
+     * @return Data e hora de expiração.
+     */
+    public Instant expiryTime() {
         return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-03:00"));
     }
 }
